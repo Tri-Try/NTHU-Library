@@ -1,7 +1,8 @@
 from nthu_library.user import User as LibraryUser
 from nthu_library.crawler import crawl_rss, \
     get_circulation_links, \
-    crawl_top_circulations, crawl_lost_objects
+    crawl_top_circulations, crawl_lost_objects, \
+    crawl_past_year_questions, crawl_available_space
 
 __author__ = 'salas'
 
@@ -73,3 +74,6 @@ class NTHULibrary(object):
 
     def get_past_year_questions(self):
         return crawl_past_year_questions()
+
+    def get_available_space(self):
+        return crawl_available_space()

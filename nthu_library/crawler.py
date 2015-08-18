@@ -208,3 +208,8 @@ def _crawl_transfer(url):
     for link in links[1:]:
         link = link.get('href', '')
         target = urljoin(url, link)
+
+def crawl_available_space():
+    soup = get_page(available_space)
+    info = soup.find('section', 'status').find_all('td')
+    print(info)

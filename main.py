@@ -54,6 +54,13 @@ def get_past_year_questions(lib):
     """
     return lib.get_past_year_questions()
 
+def get_available_space(lib):
+    """
+    :param lib:
+    :return: <list()> 可使用空間資訊
+    """
+    return lib.get_available_space()
+
 @timeit
 def start(instr, lib):
     results = funcs[instr](lib)
