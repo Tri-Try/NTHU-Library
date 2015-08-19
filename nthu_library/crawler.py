@@ -178,19 +178,19 @@ def crawl_rss(param):
 
 
 def crawl_past_year_questions():
-    soup = get_page(past_year_questions_url)
+    soup = get_page(nthu_library_url.past_year_questions_url)
     table = soup.find_all('div', 'clearfix')
     blocks = table[0].find_all('div', '')
     for block in blocks[1:]:
         links = block.find_all('a')
         for link in links:
             link = link.get('href', '')
-            url = past_year_questions + link
+            url = nthu_library_url.past_year_questions + link
             _crawl_detail(url)
     transferLinks = soup.find('ul', 'list02 clearfix').find_all('a')
     for transferLink in transferLinks:
         link = transferLink.get('href', '')
-        url = past_year_questions + link
+        url = nthu_library_url.past_year_questions + link
         _crawl_transfer(url)
 
 
@@ -211,7 +211,7 @@ def _crawl_transfer(url):
 
 
 def crawl_available_space():
-    soup = get_page(available_space)
+    soup = get_page(nthu_library_url.available_space)
     info = soup.find('section', 'status').find_all('td')
     for data in info:
 	    data = data.text

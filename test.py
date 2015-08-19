@@ -42,6 +42,13 @@ def get_lost(lib):
     return lib.get_lost()
 
 
+def get_past_year_questions(lib):
+    return lib.get_past_year_questions()
+
+
+def get_available_space(lib):
+    return lib.get_available_space()
+
 @timeit
 def start(instr, lib):
     results = funcs[instr](lib)
@@ -54,6 +61,8 @@ function_doc = """
     'new': get_newest_books,
     'top': get_top_circulations,
     'lost': get_lost,
+    'questions': get_past_year_questions,
+    'space': get_available_space,
 """
 
 ''' functions eval() from doc string '''
@@ -70,3 +79,6 @@ if __name__ == '__main__':
     start('top', library)
     start('new', library)
     start('lost', library)
+    start('questions', library)
+    start('space', library)
+
