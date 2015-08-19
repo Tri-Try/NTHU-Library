@@ -175,3 +175,44 @@ def crawl_borrow_history(rows):
 def crawl_rss(param):
     feed = feedparser.parse(nthu_library_url.rss_recent_books + param)
     return feed.get('entries')
+
+
+def crawl_past_year_questions():
+    soup = get_page(past_year_questions_url)
+    table = soup.find_all('div', 'clearfix')
+    blocks = table[0].find_all('div', '')
+    for block in blocks[1:]:
+        links = block.find_all('a')
+        for link in links:
+            link = link.get('href', '')
+            url = past_year_questions + link
+            _crawl_detail(url)
+    transferLinks = soup.find('ul', 'list02 clearfix').find_all('a')
+    for transferLink in transferLinks:
+        link = transferLink.get('href', '')
+        url = past_year_questions + link
+        _crawl_transfer(url)
+
+
+def _crawl_detail(url):
+    soup = get_page(url)
+    links = soup.find('table', 'listview').find_all('a')
+    for link in links:
+        link = link.get('href', '')
+        target = urljoin(url, link)
+
+
+def _crawl_transfer(url):
+    soup = get_page(url)
+    links = soup.find('div', 'clearfix').find_all('a')
+    for link in links[1:]:
+        link = link.get('href', '')
+        target = urljoin(url, link)
+
+
+def crawl_available_space():
+    soup = get_page(available_space)
+    info = soup.find('section', 'status').find_all('td')
+    for data in info:
+	    data = data.text
+
