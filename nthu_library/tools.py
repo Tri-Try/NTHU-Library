@@ -57,8 +57,7 @@ def post_page(url, **kwargs):
     return resp
 
 
-# @timeit
-def get_pages_event(urls):
+def get_pages(urls):
     rs = (grequests.get(u) for u in urls)
     return grequests.map(rs)
 
@@ -73,8 +72,7 @@ def _get_page(url):
     return resp
 
 
-# @timeit
-def get_pages(urls):
+def get_pages_thread(urls):
     pool = ThreadPool(cpu_count())
     return pool.map(_get_page, urls)
 
