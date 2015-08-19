@@ -212,4 +212,5 @@ def _crawl_transfer(url):
 def crawl_available_space():
     soup = get_page(available_space)
     info = soup.find('section', 'status').find_all('td')
-    print(info)
+    for data in info:
+	    data = data.text
