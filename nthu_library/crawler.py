@@ -1,6 +1,8 @@
 import re
 import feedparser
 from urllib.parse import urljoin
+from gevent import monkey
+monkey.patch_all()
 
 import nthu_library.static_urls as nthu_library_url
 from nthu_library.tools import get_page, get_pages, build_soup, post_page
@@ -21,24 +23,33 @@ def get_circulation_links():
 
 
 def crawl_top_circulations(query):
-    results = dict()
-    for content in get_pages(query):
-        table = build_soup(content).find('table', 'listview')
-        books = list()
-        for row in table.find_all('tr')[1:]:
-            try:
-                rk, title, ref, cnt = row.findChildren()
-            except ValueError:
-                # for year 2003, there's no <a> tag
-                rk, title, cnt = row.findChildren()
-            books.append({
-                'rank': rk.text,
-                'book_name': title.text.strip(' /'),
-                'link': ref.get('href') if ref else None,
-                'circulations': cnt.text
-            })
-        results[table.get('summary')] = books
-    return results
+    return {
+        k: v
+        for k, v in [
+            parse_annual_circulations(content)
+            for content in get_pages(query)
+        ]
+    }
+
+
+def parse_annual_circulations(content):
+    table = build_soup(content).find('table', 'listview')
+    books = list()
+    for row in table.find_all('tr')[1:]:
+        try:
+            cols = get_cols(row)
+            rk, a_tag, cnt = cols
+            a_tag = a_tag.find('a') or a_tag  # for b_chbook_2003
+        except ValueError:
+            # b_enbook_2003
+            rk, _, a_tag, cnt = cols
+        books.append({
+            'rank': rk.text,
+            'book_name': a_tag.text.strip(' /'),
+            'link': a_tag.get('href'),
+            'circulations': cnt.text
+        })
+    return table.get('summary'), books
 
 
 def crawl_lost_objects(data):

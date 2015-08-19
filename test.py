@@ -72,10 +72,10 @@ if __name__ == '__main__':
     library = NTHULibrary(Account(account, password))
 
     # start testing crawler function
-    start('personal', library)
+    # start('personal', library)
     start('top', library)
-    start('new', library)
-    start('lost', library)
-    start('questions', library)
-    start('space', library)
+    # start('new', library)
+    # start('lost', library)
+    # start('questions', library)
+    # start('space', library)
 
