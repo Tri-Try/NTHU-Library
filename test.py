@@ -49,6 +49,7 @@ def get_past_year_questions(lib):
 def get_available_space(lib):
     return lib.get_available_space()
 
+
 @timeit
 def start(instr, lib):
     results = {
@@ -56,8 +57,8 @@ def start(instr, lib):
         'new': get_newest_books,
         'top': get_top_circulations,
         'lost': get_lost,
-    	'questions': get_past_year_questions,
-    	'space': get_available_space,
+        'questions': get_past_year_questions,
+        'space': get_available_space,
     }[instr](lib)
 
     with open('my-library-data.json', 'w', encoding='utf8') as f:

@@ -224,5 +224,4 @@ def crawl_available_space():
     soup = get_page(nthu_library_url.available_space)
     info = soup.find('section', 'status').find_all('td')
     for data in info:
-	    data = data.text
-
+        data = data.text
