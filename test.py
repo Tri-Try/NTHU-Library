@@ -60,7 +60,7 @@ def start(instr, lib):
     	'space': get_available_space,
     }[instr](lib)
 
-    with open('my-library-data.json', 'w', encoding='utf8') as f:
+    with open('%s-library-data.json' % instr, 'w', encoding='utf8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False, sort_keys=True)
 
 
