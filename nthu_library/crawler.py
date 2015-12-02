@@ -191,38 +191,63 @@ def crawl_past_year_questions():
     soup = get_page(nthu_library_url.past_year_questions_url)
     table = soup.find_all('div', 'clearfix')
     blocks = table[0].find_all('div', '')
+    after_graduate_exams = dict()
     for block in blocks[1:]:
         links = block.find_all('a')
         for link in links:
+            text = link.text
             link = link.get('href', '')
             url = nthu_library_url.past_year_questions + link
-            _crawl_detail(url)
+            target = _crawl_detail(url)
+            after_graduate_exams[text] = target
     transferLinks = soup.find('ul', 'list02 clearfix').find_all('a')
+    transfer_exams = dict()
     for transferLink in transferLinks:
+        text = transferLink.text
         link = transferLink.get('href', '')
         url = nthu_library_url.past_year_questions + link
-        _crawl_transfer(url)
+        target = _crawl_transfer(url)
+        transfer_exams[text] = target
+    return {'研究所考古題': after_graduate_exams, '轉學考考古題': transfer_exams}
 
 
 def _crawl_detail(url):
     soup = get_page(url)
-    links = soup.find('table', 'listview').find_all('a')
-    for link in links:
-        link = link.get('href', '')
-        target = urljoin(url, link)
+    years = soup.find('table', 'listview').find_all('tr')
+    department_detail = dict()
+    for year in years[1:]:
+        which_year = year.find_all('td')[0].text
+        links = year.find_all('a')
+        yearly_detail = dict()
+        for link in links:
+            text = link.text
+            link = link.get('href', '')
+            target = urljoin(url, link)
+            yearly_detail[text] = target
+        department_detail[which_year] = yearly_detail
+    return department_detail
 
 
 def _crawl_transfer(url):
     soup = get_page(url)
     links = soup.find('div', 'clearfix').find_all('a')
+    transfer_detail = dict()
     for link in links[1:]:
+        text = link.text
         link = link.get('href', '')
         target = urljoin(url, link)
+        transfer_detail[text] = target
+    return transfer_detail
 
 
 def crawl_available_space():
     soup = get_page(nthu_library_url.available_space)
-    info = soup.find('section', 'status').find_all('td')
-    for data in info:
-	    data = data.text
+    infos = soup.find('section', 'status').find_all('tr')
+    space = dict()
+    for info in infos[1:]:
+        item = info.find_all('td')
+        text = item[0].text
+        number = item[1].text
+        space[text] = number
+    return space
 
