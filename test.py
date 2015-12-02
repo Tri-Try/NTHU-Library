@@ -66,8 +66,9 @@ def start(instr, lib):
 
 if __name__ == '__main__':
 
+    import getpass
     account = os.getenv('NTHU_LIBRARY_ID') or input('ID: ')
-    password = os.getenv('NTHU_LIBRARY_PWD') or input('PWD: ')
+    password = os.getenv('NTHU_LIBRARY_PWD') or getpass.getpass('PWD: ')
     library = NTHULibrary(Account(account, password))
 
     # start testing crawler function
