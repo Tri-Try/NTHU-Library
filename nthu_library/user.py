@@ -75,4 +75,3 @@ class User:
             return crawl_borrow_history(rows)
         except AttributeError:
             return []
-

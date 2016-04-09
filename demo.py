@@ -29,7 +29,7 @@ def get_personal_info(lib):
             '借閱中': lib.get_current_borrow(),
             '預約紀錄': lib.get_reserve_history(),
         }
-    except NotLoginException as e:
+    except NotLoginException:
         print('Exception: Not login yet')
     return None
 
@@ -49,19 +49,21 @@ def get_past_year_questions(lib):
 def get_available_space(lib):
     return lib.get_available_space()
 
+
 @timeit
-def start(instr, lib):
+def start(instr, lib, dump=False):
     results = {
         'personal': get_personal_info,
         'new': get_newest_books,
         'top': get_top_circulations,
         'lost': get_lost,
-    	'questions': get_past_year_questions,
-    	'space': get_available_space,
+        'questions': get_past_year_questions,
+        'space': get_available_space,
     }[instr](lib)
 
-    with open('%s-library-data.json' % instr, 'w', encoding='utf8') as f:
-        json.dump(results, f, indent=2, ensure_ascii=False, sort_keys=True)
+    if dump:
+        with open('%s-library-data.json' % instr, 'w', encoding='utf8') as f:
+            json.dump(results, f, indent=2, ensure_ascii=False, sort_keys=True)
 
 
 if __name__ == '__main__':
@@ -78,4 +80,3 @@ if __name__ == '__main__':
     start('lost', library)
     start('questions', library)
     start('space', library)
-

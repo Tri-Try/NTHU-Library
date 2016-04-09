@@ -4,7 +4,7 @@ from multiprocessing import cpu_count
 from multiprocessing.pool import ThreadPool
 
 import requests
-import grequests
+# import grequests
 from bs4 import BeautifulSoup
 
 
@@ -58,9 +58,9 @@ def post_page(url, **kwargs):
 
 
 # @timeit
-def get_pages_event(urls):
-    rs = (grequests.get(u) for u in urls)
-    return grequests.map(rs)
+# def get_pages_event(urls):
+#     rs = (grequests.get(u) for u in urls)
+#     return grequests.map(rs)
 
 
 def build_soup(resp):
@@ -77,4 +77,3 @@ def _get_page(url):
 def get_pages(urls):
     pool = ThreadPool(cpu_count())
     return pool.map(_get_page, urls)
-

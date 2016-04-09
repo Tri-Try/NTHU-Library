@@ -6,4 +6,3 @@ lost_found_url = 'http://adage.lib.nthu.edu.tw/find/search_it.php'
 past_year_questions_url = 'http://www.lib.nthu.edu.tw/library/department/ref/exam/index.htm'
 past_year_questions = 'http://www.lib.nthu.edu.tw/library/department/ref/exam/'
 available_space = 'https://libsms.lib.nthu.edu.tw/system/status.aspx'
-

@@ -20,11 +20,13 @@ def get_circulation_links():
     ]
 
 
-def crawl_top_circulations(query):
+def crawl_top_circulations(rank_type, query):
     results = dict()
     for content in get_pages(query):
         table = build_soup(content).find('table', 'listview')
         books = list()
+        year_tag = table.get('summary')
+        year, tag = re.findall('(\d+)年(\S+)', year_tag)[0]
         for row in table.find_all('tr')[1:]:
             try:
                 rk, title, ref, cnt = row.findChildren()
@@ -32,9 +34,12 @@ def crawl_top_circulations(query):
                 # for year 2003, there's no <a> tag
                 rk, title, cnt = row.findChildren()
             books.append({
-                'rank': rk.text,
+                'type': rank_type,
                 'book_name': title.text.strip(' /'),
-                'link': ref.get('href') if ref else None,
+                'url': ref.get('href') if ref else None,
+                'rank': rk.text,
+                'tag': tag,
+                'year': year,
                 'circulations': cnt.text
             })
         results[table.get('summary')] = books
@@ -45,11 +50,15 @@ def crawl_lost_objects(data):
     soup = post_page(nthu_library_url.lost_found_url, data=data)
     lost_items = list()
     for item in build_soup(soup).select('table > tr')[1:]:
+        r = [s.strip()
+             for s in item.select('td:nth-of-type(4)')[0].text.split('\r\n')]
+        sysid = re.search('\d+', r[1])
         lost_items.append({
             'id': item.select('td:nth-of-type(1)')[0].text,
             'time': item.select('td:nth-of-type(2)')[0].text,
             'place': item.select('td:nth-of-type(3)')[0].text,
-            'description': item.select('td:nth-of-type(4)')[0].text,
+            'description': r[0],
+            'system_id': sysid.group() if sysid else None
         })
     return lost_items
 
@@ -59,7 +68,8 @@ def login_action(account):
     :param account
     :return: page source response
     """
-    soup = get_page(urljoin(nthu_library_url.info_system, '?func=file&file_name=login1'))
+    soup = get_page(urljoin(
+        nthu_library_url.info_system, '?func=file&file_name=login1'))
     login_url = soup.find('form').attrs.get('action')
     resp = post_page(login_url, data=account.to_dict())
     return resp
@@ -110,7 +120,9 @@ def crawl_personal_page(session_url):
 
 def get_personal_details_table(url):
     soup = get_page(url)
-    rows = soup.find('table', attrs={'cellspacing': '2', 'border': '0'}).find_all('tr')[1:]
+    rows = soup.find('table',
+                     attrs={'cellspacing': '2', 'border': '0'}
+                     ).find_all('tr')[1:]
     return rows
 
 
@@ -176,7 +188,8 @@ def crawl_borrow_history(rows):
                 'publish_year': cols[3].text,
                 'deadline_status': status,
                 'deadline': date,
-                'borrow_time': cols[6].text + ' ' + re.findall('>(.*?)<', str(cols[7]))[0],
+                'borrow_time': '{} {}'.format(
+                    cols[6].text, re.findall('>(.*?)<', str(cols[7]))[0]),
                 'branch': cols[8].text
             })
     return books
@@ -250,4 +263,3 @@ def crawl_available_space():
         number = item[1].text
         space[text] = number
     return space
-
